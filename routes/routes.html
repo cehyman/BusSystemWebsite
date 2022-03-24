@@ -2,19 +2,30 @@
 <html>
 	<head>
 		<title>Routes</title>
+		<script src="../js/logOut.js"></script>
 	</head>
 
 	<body>
 		<h1>Welcome to the Routes page.</h1>
 		<p>Here will be where you can look at each route's schedules</p>
-		<a href="../create_booking/book.html">Book a ride here</a>
+		<a href="../create_booking/book.html">Book a ride here</a><br /><br />
+
+		<label id="labelUsername"></label><br />
+		<input id="buttonLogOut" type="button" onclick="logOut();" value="Log Out" />
+		<br /><br /><br />
+
+
 
 
 	</body>
 </html>
 
 <script>
+	//function that is called when page is loaded
 	function populateSchedule() {
-		
+		var labelUser = document.getElementById("labelUsername");
+		labelUser.innerHTML = sessionStorage.getItem('username');
+
 	}
+	populateSchedule();
 </script>

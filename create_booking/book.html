@@ -2,13 +2,19 @@
 <html>
 	<head>
 		<title>Routes</title>
+		<script src="../js/logOut.js"></script>
 	</head>
 
 	<body>
 		<h1>Welcome to the Booking page.</h1>
 		<p>Here you can book and "pay" for rides on the bus</p>
-		<a href="../routes/routes.html">Look at routes in more detail here</a><br /><br /><br />
+		<a href="../routes/routes.html">Look at routes in more detail here</a><br /><br />
 
+		<label id="labelUsername"></label><br />
+		<input id="buttonLogOut" type="button" onclick="logOut();" value="Log Out" />
+		<br /><br /><br />
+
+		<h2>Book a ride:</h2>
 		<label>Departure Location:</label>
 		<select id="dropdownDepart">
 
@@ -39,11 +45,13 @@
 		var time = iTime.value;
 
 		//TODO: perform SQL stuff here
+
 	}
 
 	//function that is called when page is loaded to populate the dropdowns
 	function populateDropdowns() {
-
+		var labelUser = document.getElementById("labelUsername");
+		labelUser.innerHTML = sessionStorage.getItem('username');
 	}
 
 	populateDropdowns();
