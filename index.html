@@ -7,16 +7,30 @@
 	<body>
 		<h1>Please Log In.</h1>
 
-		<input id="buttonLogIn" type="button" value="Log In" onclick="logIn();"/>
+		<label>Username:</label>
+		<input id="tUsername" type="text"><br><br>
+		<label>Password:</label>
+		<input id="tPassword" type="password"><br><br>
+		<input id="buttonLogIn" type="button" value="Log In" onclick="logIn();" />
+
 	</body>
 
-	<script>
-		function logIn() {
-			//TODO: check if the user is in the database
-
-			//on success, go to the page with the routes on it
-			location.href = "routes/routes.html";
-		}
-	</script>
-
 </html>
+
+<script>
+	function logIn() {
+		//TODO: check if the user is in the database
+		var inputUsername = document.getElementById("tUsername");
+		var inputPassword = document.getElementById("tPassword");
+
+		var username = inputUsername.value;
+		var password = inputPassword.value;
+
+		//store the username in sessionStorage so we can use it to create bookings
+		//sessionStorage.setItem('username', username);
+		//sessionStorage.removeItem('username');
+
+		//on success, go to the page with the routes on it
+		location.href = "routes/routes.html";
+	}
+</script>

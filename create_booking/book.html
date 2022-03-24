@@ -1,12 +1,50 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Routes</title>
-</head>
+	<head>
+		<title>Routes</title>
+	</head>
 
-<body>
-	<h1>Welcome to the Booking page.</h1>
-	<p>Here you can book and "pay" for rides on the bus</p>
-	<a href="../routes/routes.html">Look at routes in more detail here</a>
-</body>
+	<body>
+		<h1>Welcome to the Booking page.</h1>
+		<p>Here you can book and "pay" for rides on the bus</p>
+		<a href="../routes/routes.html">Look at routes in more detail here</a><br /><br /><br />
+
+		<label>Departure Location:</label>
+		<select id="dropdownDepart">
+
+		</select><br /><br />
+		
+		<label>Destination:</label>
+		<select id="dropdownDestination">
+
+		</select><br /><br />
+
+		<label>Arrival Time:</label>
+		<input id="inputArrivalTime" type="time" /><br /><br />
+
+		<input id="buttonSubmit" type="button" onclick="bookRide();" value="Submit" />
+
+	</body>
 </html>
+
+<script>
+	//function that is called when the user presses the submit button
+	function bookRide() {
+		var dDepart = document.getElementById("dropdownDepart");
+		var dDest = document.getElementById("dropdownDestination");
+		var iTime = document.getElementById("inputArrivalTime");
+
+		var depart = dDepart.value;
+		var dest = dDest.value;
+		var time = iTime.value;
+
+		//TODO: perform SQL stuff here
+	}
+
+	//function that is called when page is loaded to populate the dropdowns
+	function populateDropdowns() {
+
+	}
+
+	populateDropdowns();
+</script>
