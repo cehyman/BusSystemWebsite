@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Routes</title>
+	<script src="../js/logOut.js"></script>
+</head>
+
+<body>
+	<h1>Welcome to the Account page.</h1>
+	<p>Here you can look at the bookings you currently have</p>
+	<a href="../routes/routes.html">Look at routes in more detail here</a><br />
+	<a href="../create_booking/book.html">Book a ride here</a><br /><br />
+
+	<label id="labelUsername"></label><br />
+	<input id="buttonLogOut" type="button" onclick="logOut();" value="Log Out" />
+	<br /><br /><br />
+
+	<h2>Bookings:</h2>
+	<table id="tableBookings"></table>
+
+</body>
+</html>
+
+<script>
+
+	//function that is called when page is loaded to populate the dropdowns
+	function populateBookings() {
+		var labelUser = document.getElementById("labelUsername");
+		labelUser.innerHTML = sessionStorage.getItem('username');
+		var table = document.getElementById("tableBookings");
+
+		//get the list of bookings that the user has from database and add them to table here
+		//loop:
+		var row = table.insertRow(0);
+		var col1 = row.insertCell(0); //one column
+		var col2 = row.insertCell(1); //example second column
+		col1.innerHTML = "ex_col1";
+		col2.innerHTML = "ex_col2";
+
+	}
+
+	populateBookings();
+</script>

@@ -11,13 +11,13 @@
 		<a href="../create_booking/book.html">Book a ride here</a><br /><br />
 
 		<label id="labelUsername"></label><br />
+		<input id="buttonMyAcc" type="button" onclick="location.href = '../account/account.html';" value="My Account" />
 		<input id="buttonLogOut" type="button" onclick="logOut();" value="Log Out" />
 		<br /><br /><br />
 
 		<h2>Route Lookup:</h2>
 		<label>Route Number:</label>
 		<select id="dropdownRoute" onchange="populateSchedule();">
-
 		</select><br /><br />
 
 		<h2 id="headerRoute"></h2>
