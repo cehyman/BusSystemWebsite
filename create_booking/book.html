@@ -50,8 +50,12 @@
 
 	//function that is called when page is loaded to populate the dropdowns
 	function populateDropdowns() {
+		var dDepart = document.getElementById("dropdownDepart");
+		var dDest = document.getElementById("dropdownDestination");
 		var labelUser = document.getElementById("labelUsername");
 		labelUser.innerHTML = sessionStorage.getItem('username');
+
+		//get the list of locations from database and add them to dropdown here
 	}
 
 	populateDropdowns();

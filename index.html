@@ -2,10 +2,12 @@
 <html>
 	<head>
 		<title>Splash Screen</title>
+		<link rel="stylesheet" href="style.css" />
 	</head>
 
 	<body>
 		<h1>Please Log In.</h1>
+		<label class="redLabel" id="labelLoginFailed"></label><br />
 
 		<label>Username:</label>
 		<input id="tUsername" type="text"><br><br>
@@ -19,17 +21,25 @@
 
 <script>
 	function logIn() {
-		//TODO: check if the user is in the database
 		var inputUsername = document.getElementById("tUsername");
 		var inputPassword = document.getElementById("tPassword");
+		var labelError = document.getElementById("labelLoginFailed");
 
 		var username = inputUsername.value;
 		var password = inputPassword.value;
 
-		//store the username in sessionStorage so we can use it to create bookings
-		sessionStorage.setItem('username', username);
-
-		//on success, go to the page with the routes on it
-		location.href = "routes/routes.html";
+		//TODO: verify username and password are in database
+		//this is just to add functionality, so the verification may look different when actually implemented
+		var testUsername = "test";
+		var testPassword = "password";
+		if (username == testUsername && password == testPassword) {
+			//on success, store the username in sessionStorage so we can use it to create bookings and other stuff
+			//then go to the page with the routes on it
+			sessionStorage.setItem('username', username);
+			location.href = "routes/routes.html";
+		} else {
+			//on failure, display failure message
+			labelError.innerHTML = "The username and password combination are incorrect.";
+		}
 	}
 </script>
