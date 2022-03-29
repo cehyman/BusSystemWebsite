@@ -42,6 +42,29 @@ app.post('/loginRequest', function(req, res) {
         }
     });
 });
+
+app.post('/viewBookings', function(req, res) {
+    var request = 'SELECT * FROM bookings WHERE username = "' + req.body.username + '"';
+    db.query(request, function(err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err,
+                bookings: null
+            });
+        } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1,
+                bookings: null
+            });
+        } else {
+            res.json({
+                code: 0,
+                bookings: rows
+            });
+        }
+    });
+});
+
 app.get('/', function (req, res) {
     res.render('index', {});
   });

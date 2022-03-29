@@ -2,14 +2,14 @@
 <html>
 <head>
 	<title>Routes</title>
-	<script src="logOut.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
 	<h1>Welcome to the Account page.</h1>
 	<p>Here you can look at the bookings you currently have</p>
-	<a href="routes.ejs">Look at routes in more detail here</a><br />
-	<a href="book.ejs">Book a ride here</a><br /><br />
+	<a href="/routes">Look at routes in more detail here</a><br />
+	<a href="/book">Book a ride here</a><br /><br />
 
 	<label id="labelUsername"></label><br />
 	<input id="buttonLogOut" type="button" onclick="logOut();" value="Log Out" />
@@ -22,21 +22,57 @@
 </html>
 
 <script>
-
+	
 	//function that is called when page is loaded to populate the dropdowns
 	function populateBookings() {
 		var labelUser = document.getElementById("labelUsername");
 		labelUser.innerHTML = sessionStorage.getItem('username');
 		var table = document.getElementById("tableBookings");
-
+		var dbData;
 		//get the list of bookings that the user has from database and add them to table here
-		//loop:
-		var row = table.insertRow(0);
-		var col1 = row.insertCell(0); //one column
-		var col2 = row.insertCell(1); //example second column
-		col1.innerHTML = "ex_col1";
-		col2.innerHTML = "ex_col2";
+		$.ajax({
+			url: "http://localhost:8080/viewBookings",
+			type: "POST",
+			data: {
+				username: labelUser.innerHTML
+			},
+			dataType: 'json',
+			success: function (result) {
+				const NONEMPTY = 0;
+				const EMPTY = 1;
 
+				if (result.code == NONEMPTY) {
+					dbData = result.bookings;
+					for (var i = 0; i < dbData.length; i++) {
+						row = table.insertRow(i);
+						col1 = row.insertCell(0);
+						col2 = row.insertCell(1);
+						col1.innerHTML = "" + dbData[i].route_id;
+						col2.innerHTML = "" + dbData[i].paid_price;
+					}
+					var row = table.insertRow(0);
+					var col1 = row.insertCell(0);
+					var col2 = row.insertCell(1);
+					col1.innerHTML = "Route";
+					col2.innerHTML = "Price";
+				} else if (result.code == EMPTY) {
+					var row = table.insertRow(0);
+					var col1 = row.insertCell(0);
+					col1.innerHTML = "No bookings."
+				} else {
+					var row = table.insertRow(0);
+					var col1 = row.insertCell(0);
+					col1.innerHTML = "Error fetching bookings.";
+				}
+			}
+		});
+		//loop:
+
+	}
+
+	function logOut() {
+		sessionStorage.removeItem('username');
+		location.href = "/index";
 	}
 
 	populateBookings();
