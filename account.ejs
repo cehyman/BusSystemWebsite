@@ -2,6 +2,8 @@
 <html>
 <head>
 	<title>Routes</title>
+	<link rel="stylesheet" href="style.css" />
+	<script src="logOut.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
@@ -26,7 +28,7 @@
 	//function that is called when page is loaded to populate the dropdowns
 	function populateBookings() {
 		var labelUser = document.getElementById("labelUsername");
-		labelUser.innerHTML = sessionStorage.getItem('username');
+		labelUser.innerHTML = 'Logged in as ' + sessionStorage.getItem('username');
 		var table = document.getElementById("tableBookings");
 		var dbData;
 		//get the list of bookings that the user has from database and add them to table here
@@ -34,7 +36,7 @@
 			url: "http://localhost:8080/viewBookings",
 			type: "POST",
 			data: {
-				username: labelUser.innerHTML
+				username: sessionStorage.getItem('username')
 			},
 			dataType: 'json',
 			success: function (result) {
@@ -66,13 +68,6 @@
 				}
 			}
 		});
-		//loop:
-
-	}
-
-	function logOut() {
-		sessionStorage.removeItem('username');
-		location.href = "/index";
 	}
 
 	populateBookings();

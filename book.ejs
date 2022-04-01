@@ -2,7 +2,9 @@
 <html>
 	<head>
 		<title>Routes</title>
+		<link rel="stylesheet" href="style.css" />
 		<script src="logOut.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 
 	<body>
@@ -29,6 +31,10 @@
 
 		<input id="buttonSubmit" type="button" onclick="bookRide();" value="Submit" />
 
+		<h2 id="headerRoute"></h2>
+		<table id="tableRoute"></table>
+		<h3 id="bookingStatus"></h3>
+
 	</body>
 </html>
 
@@ -38,13 +44,89 @@
 		var dDepart = document.getElementById("dropdownDepart");
 		var dDest = document.getElementById("dropdownDestination");
 		var iTime = document.getElementById("inputArrivalTime");
+		var hRoute = document.getElementById("headerRoute");
+		var table = document.getElementById("tableRoute");
 
 		var depart = dDepart.value;
 		var dest = dDest.value;
 		var time = iTime.value;
 
-		//TODO: perform SQL stuff here
+		//clear the result section
+		hRoute.innerHTML = "";
+		//clear the table
+		while (table.hasChildNodes()) {
+			table.removeChild(table.firstChild);
+		}
 
+		if (depart == dest || depart == 'Select a route' || dest == 'Select a route' || time == '') {
+			hRoute.innerHTML = "Please select a valid route.";
+			return;
+		} 
+
+		var dbData;
+		//Post to server with dDepart, dDest, and iTime
+		$.ajax({
+			url: "http://localhost:8080/bookRide",
+			type: "POST",
+			data: {
+				depart: depart,
+				dest: dest,
+				time: time
+			},
+			dataType: 'json',
+			success: function (result) {
+				const SUCCESS = 0;
+				const NO_ROUTE = 1;
+				const NO_SEATS = 2;
+				hRoute.innerHTML = "" + result.code;
+
+				if (result.code == SUCCESS) {
+					dbData = result.full;
+					var totalPrice = 0;
+					for (var i = 0; i < dbData.length; i++) {
+						var row = table.insertRow(i);
+						var cell1 = row.insertCell(0);
+						var cell2 = row.insertCell(1);
+						cell1.innerHTML = dbData[i].depart_stop;
+						cell2.innerHTML = dbData[i].depart_time;
+						totalPrice += parseFloat(dbData[i].price);
+					}
+					var row = table.insertRow(0);
+					var cell1 = row.insertCell(0);
+					var cell2 = row.insertCell(1);
+					cell1.innerHTML = "Bus Stop";
+					cell2.innerHTML = "Departure Time";
+					hRoute.innerHTML = "Booked route from " + depart + " to " + dest + " for total $" + totalPrice + ", All Stops: ";
+					generateBookings(dbData);
+				} else if (result.code == NO_ROUTE) {
+					hRoute.innerHTML = "No route from " + depart + " to " + dest + " arriving before " + time;
+				} else if (result.code == NO_SEATS) {
+					hRoute.innerHTML = "No seats available for route from " + depart + " to " + dest + " arriving before " + time;
+				} else {
+					hRoute.innerHTML = "Error contacting database. error: " + result.code;
+				}
+			}
+		});
+		
+
+	}
+
+	function generateBookings(dbData) {
+		$.ajax({
+			url: "http://localhost:8080/generateBookings",
+			type: "POST",
+			data: {
+				bookings: dbData,
+				username: sessionStorage.getItem("username")
+			},
+			dataType: 'json',
+			success: function (result) {
+				if (result.code != 0) {
+					var bookingStatus = document.getElementById("bookingStatus");
+					bookingStatus.innerHTML = "Booking failed: " + JSON.stringify(result.code);
+				}
+			}
+		})
 	}
 
 	//function that is called when page is loaded to populate the dropdowns
@@ -52,7 +134,43 @@
 		var dDepart = document.getElementById("dropdownDepart");
 		var dDest = document.getElementById("dropdownDestination");
 		var labelUser = document.getElementById("labelUsername");
-		labelUser.innerHTML = sessionStorage.getItem('username');
+		labelUser.innerHTML = 'Logged in as ' + sessionStorage.getItem('username');
+		var dbData;
+		$.ajax({
+			url: "http://localhost:8080/viewRoutes",
+			type: "GET",
+			dataType: 'json',
+			success: function (result) {
+				const NONEMPTY = 0;
+				const EMPTY = 1;
+
+				if (result.code == NONEMPTY) {
+					dbData = result.routes;
+					var option = document.createElement("option");
+					option.text = "Select a route";
+					dDepart.appendChild(option);
+					option = document.createElement("option");
+					option.text = "Select a route";
+					dDest.appendChild(option);
+					for (var i = 0; i < dbData.length; i++) {
+						option = document.createElement("option");
+						option.value = "" + dbData[i].route_id;
+						option.innerHTML = "" + dbData[i].route_id;
+						dDepart.appendChild(option);
+						option = document.createElement("option");
+						option.value = "" + dbData[i].route_id;
+						option.innerHTML = "" + dbData[i].route_id;
+						dDest.appendChild(option);
+					}
+				} else if (result.code == EMPTY) {
+					var option = document.createElement("option");
+					option.text = "No routes found";
+					dRoute.add(option);
+				} else {
+					alert("Error: " + result.code);
+				}
+			}
+		});
 
 		//get the list of locations from database and add them to dropdown here
 	}

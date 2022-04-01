@@ -2,7 +2,9 @@
 <html>
 	<head>
 		<title>Routes</title>
+		<link rel="stylesheet" href="style.css" />
 		<script src="logOut.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 
 	<body>
@@ -31,22 +33,39 @@
 	//function that is called when page is loaded
 	function populateDropdown() {
 		var labelUser = document.getElementById("labelUsername");
-		labelUser.innerHTML = sessionStorage.getItem('username');
+		labelUser.innerHTML = 'Logged in as ' + sessionStorage.getItem('username');
 
 		var dRoute = document.getElementById("dropdownRoute");
-
+		var dbData;
 		//get list of route numbers from database and add them to dropdown here
-		//loop for each route number:
-		var toAdd = document.createElement("option");
-		toAdd.value = "route number placeholder";
-		toAdd.innerHTML = "route number placeholder";
-		dRoute.appendChild(toAdd);
+		$.ajax({
+			url: "http://localhost:8080/viewRoutes",
+			type: "GET",
+			dataType: 'json',
+			success: function (result) {
+				const NONEMPTY = 0;
+				const EMPTY = 1;
 
-		var toAdd2 = document.createElement("option");
-		toAdd2.value = "21A";
-		toAdd2.innerHTML = "21A";
-		dRoute.appendChild(toAdd2);
-
+				if (result.code == NONEMPTY) {
+					dbData = result.routes;
+					var option = document.createElement("option");
+					option.text = "Select a route";
+					dRoute.appendChild(option);
+					for (var i = 0; i < dbData.length; i++) {
+						option = document.createElement("option");
+						option.value = "" + dbData[i].route_id;
+						option.innerHTML = "" + dbData[i].route_id;
+						dRoute.appendChild(option);
+					}
+				} else if (result.code == EMPTY) {
+					var option = document.createElement("option");
+					option.text = "No routes found";
+					dRoute.add(option);
+				} else {
+					alert("Error: " + result.code);
+				}
+			}
+		});
 	}
 
 	//function called when an item in the dropdown is selected
@@ -55,18 +74,56 @@
 		var route = document.getElementById("dropdownRoute").value;
 		var hRoute = document.getElementById("headerRoute");
 		var table = document.getElementById("tableRoute");
-
-		hRoute.innerHTML = route;
+		if (route == 'Select a route') {
+			hRoute.innerHTML = "";
+			// clear the table
+			while (table.hasChildNodes()) {
+				table.removeChild(table.firstChild);
+			}
+			return;
+		}
+		hRoute.innerHTML = "Route Selected: " + route;
 
 		//clear the table
-		//table.remove(); //or table.innerHTML = "";
+		while (table.hasChildNodes()) {
+			table.removeChild(table.firstChild);
+		}
+		$.ajax({
+			url: "http://localhost:8080/viewSchedule",
+			type: "POST",
+			data: {
+				route_id: route
+			},
+			dataType: 'json',
+			success: function (result) {
+				const NONEMPTY = 0;
+				const EMPTY = 1;
 
-		//get the route table from the database, add it to the table:
-		var row = table.insertRow(0);
-		var col1 = row.insertCell(0); //one column
-		var col2 = row.insertCell(1); //example second column
-		col1.innerHTML = "column_1";
-		col2.innerHTML = "column_2";
+				if (result.code == NONEMPTY) {
+					var dbData = result.schedule;
+					for (var i = 0; i < dbData.length; i++) {
+						var row = table.insertRow(i);
+						var cell1 = row.insertCell(0);
+						var cell2 = row.insertCell(1);
+						cell1.innerHTML = dbData[i].depart_time;
+						cell2.innerHTML = dbData[i].arrive_time;
+					}
+					var row = table.insertRow(0);
+					var cell1 = row.insertCell(0);
+					var cell2 = row.insertCell(1);
+					cell1.innerHTML = "Departure Times";
+					cell2.innerHTML = "Arrival Times";
+				} else if (result.code == EMPTY) {
+					var row = table.insertRow(0);
+					var cell1 = row.insertCell(0);
+					cell1.innerHTML = "No schedule found";
+				} else {
+					var row = table.insertRow(0);
+					var cell1 = row.insertCell(0);
+					cell1.innerHTML = "Error: " + result.code;
+				}
+			}
+		});
 	}
 
 	populateDropdown();

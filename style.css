@@ -1,3 +1,9 @@
 .redLabel {
 	color: red
 }
+
+/*Dark mode*/
+body {
+	background-color: #000;
+	color: #fff;
+}

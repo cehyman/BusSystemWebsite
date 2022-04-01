@@ -11,6 +11,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded( {
     extended: true
 }));
+
+// handle post request from index.ejs
 app.post('/loginRequest', function(req, res) {
     var request = 'SELECT * FROM customer WHERE username = "' + req.body.username + '"';
     db.query(request, function(err, rows, fields) {
@@ -43,6 +45,7 @@ app.post('/loginRequest', function(req, res) {
     });
 });
 
+// handle post request from account.ejs
 app.post('/viewBookings', function(req, res) {
     var request = 'SELECT * FROM bookings WHERE username = "' + req.body.username + '"';
     db.query(request, function(err, rows, fields) {
@@ -65,6 +68,105 @@ app.post('/viewBookings', function(req, res) {
     });
 });
 
+app.post('/generateBookings', function(req, res) {
+    // bookings table looks like (booking_id, route_id, username, paid_price)
+    for (var i = 0; i < req.body.bookings.length; i++) {
+        var request = 'INSERT INTO bookings (route_id, username, paid_price) VALUES ("' + req.body.bookings[i].route_id + '", "' + req.body.username + '", "' + req.body.bookings[i].price + '")';
+        db.query(request, function(err, result) {
+            if (err) {
+                res.json({
+                    code: err
+                });
+                return;
+            } else if (i == req.body.bookings.length - 1) {
+                res.json({
+                    code: 0
+                });
+            }
+        });
+    }
+});
+
+app.post('/viewSchedule', function(req, res) { 
+    var request = 'SELECT depart_time, arrive_time FROM route WHERE route_id = "' + req.body.route_id + '"';
+    db.query(request, function(err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err,
+                schedule: null
+            });
+        } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1,
+                schedule: null
+            });
+        } else {
+            res.json({
+                code: 0,
+                schedule: rows
+            });
+        }
+    });
+});
+
+app.get('/viewRoutes', function(req, res) {
+    var request = 'SELECT route_id FROM route';
+    db.query(request, function(err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err,
+                routes: null
+            });
+        } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1,
+                routes: null
+            });
+        } else {
+            res.json({
+                code: 0,
+                routes: rows
+            });
+        }
+    });
+});
+
+// handle the bookRide post request
+app.post('/bookRide', function(req, res) {
+    var fullRoute = new Array();
+    queryRecursion(req.body.dest, req.body.time, req.body.depart, res, fullRoute);
+});
+
+/*  there's something called callbacks that prevent race conditions in node.js, I refuse to learn them
+    So I solved race conditions with recursion instead. Sorry. */
+
+function queryRecursion(dest, time, depart, res, fullRoute) {
+    var request = 'SELECT * FROM route WHERE arrive_stop = "' + dest + '" AND arrive_time < "' + time + '" ORDER BY arrive_time DESC LIMIT 1';
+    db.query(request, function(err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err,
+                full: null
+            });
+        } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1,
+                full: null
+            });
+        } else if (rows[0].depart_stop == depart) {
+            fullRoute.unshift(rows[0]);
+            res.json({
+                code: 0,
+                full: fullRoute
+            });
+        } else {
+            fullRoute.unshift(rows[0]);
+            queryRecursion(rows[0].depart_stop, rows[0].depart_time, depart, res, fullRoute);
+        }
+    });
+}
+
+
 app.get('/', function (req, res) {
     res.render('index', {});
   });
@@ -83,4 +185,4 @@ app.get('/routes', function (req, res) {
 app.use(express.static(__dirname)); //__dir and not _dir
 var port = 8080; // you can use any port
 app.listen(port);
-console.log('server on' + port);
+console.log('server on ' + port);
