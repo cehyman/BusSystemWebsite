@@ -3,7 +3,7 @@
 Installing node and necessary packages
 1. Install node and npm (node package manager) on your machine, use google to find out how
 2. navigate to the main directory containing server.js in a terminal
-3. run command "node init", then hit enter using all of the default values until finished
+3. run command "npm init", then hit enter using all of the default values until finished
 4. run command "npm install express ejs mysql2 body-parser --save"
 
 Running the node server
