@@ -182,6 +182,9 @@ app.get('/book', function (req, res) {
 app.get('/routes', function (req, res) {
     res.render('routes', {});
 });
+app.get('/createAccount', function (req, res) {
+    res.render('createAccount', {});
+});
 app.use(express.static(__dirname)); //__dir and not _dir
 var port = 8080; // you can use any port
 app.listen(port);

@@ -2,21 +2,23 @@
 <html>
 
 <head>
-	<title>Log In</title>
+	<title>Create Account</title>
 	<link rel="stylesheet" href="style.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
-	<h1>Please Log In.</h1>
+	<h1>Create an Account.</h1>
 	<label class="redLabel" id="labelLoginFailed"></label><br />
 
 	<label>Username:</label>
 	<input id="tUsername" type="text"><br><br>
 	<label>Password:</label>
 	<input id="tPassword" type="password"><br><br>
-	<input id="buttonLogIn" type="button" value="Log In" /><br><br>
-	<a href="/createAccount">Don't have an account? Create one here.</a><br />
+	<label id="labelConfirm">Confirm Password:</label>
+	<input id="tConfirmPassword" type="password"><br><br>
+	<input id="buttonLogIn" type="button" value="Create Account" /><br><br>
+	<a href="/index">Have an account? Log in here.</a><br />
 	<script>
 		$(document).ready(function () {
 			$('#buttonLogIn').on('click', function () {
@@ -48,6 +50,12 @@
 						}
 					}
 				});
+			});
+			$('#buttonCreatePassword').on('click', function () {
+				var labelCP = document.findElementById("labelConfirm");
+				var tCP = document.findElementById("tConfirmPassword");
+				var bLogIn = document.findElementById("buttonLogIn");
+
 			});
 		}); 
 	</script>
