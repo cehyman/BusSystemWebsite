@@ -17,11 +17,11 @@
 	<input id="tPassword" type="password"><br><br>
 	<label id="labelConfirm">Confirm Password:</label>
 	<input id="tConfirmPassword" type="password"><br><br>
-	<input id="buttonLogIn" type="button" value="Create Account" /><br><br>
+	<input id="buttonCreateAccount" type="button" value="Create Account" /><br><br>
 	<a href="/index">Have an account? Log in here.</a><br />
 	<script>
 		$(document).ready(function () {
-			$('#buttonLogIn').on('click', function () {
+			$('#buttonCreateAccount').on('click', function () {
 				var inputUsername = document.getElementById("tUsername").value;
 				var inputPassword = document.getElementById("tPassword").value;
 				var inputConfirmPass = document.getElementById("tConfirmPassword").value;
@@ -42,7 +42,6 @@
 							if (result.code == ACCOUNT_EXISTS) {
 								document.getElementById("labelLoginFailed").innerHTML = "Account with username '" + inputUsername + "' already exists";
 							} else if (result.code == CREATED_ACCOUNT) {
-								// can add some stuff here later if we want to treat registering and logging in differently
 								document.getElementById("labelLoginFailed").innerHTML = "Created account with username '" + inputUsername + "'";
 							} else {
 								document.getElementById("labelLoginFailed").innerHTML = "Error contacting database. error: " + result.code;
@@ -56,7 +55,7 @@
 			$('#buttonCreatePassword').on('click', function () {
 				var labelCP = document.findElementById("labelConfirm");
 				var tCP = document.findElementById("tConfirmPassword");
-				var bLogIn = document.findElementById("buttonLogIn");
+				var bLogIn = document.findElementById("buttonCreateAccount");
 
 			});
 		}); 
