@@ -24,32 +24,34 @@
 			$('#buttonLogIn').on('click', function () {
 				var inputUsername = document.getElementById("tUsername").value;
 				var inputPassword = document.getElementById("tPassword").value;
-				$.ajax({
-					url: "http://localhost:8080/loginRequest",
-					type: "POST",
-					data: {
-						username: inputUsername,
-						password: inputPassword,
-					},
-					dataType: 'json',
-					success: function (result) {
-						const LOGGEDIN = 0;
-						const CREATED_ACCOUNT = 1;
-						const INCORRECT_PASSWORD = 2;
+				var inputConfirmPass = document.getElementById("tConfirmPassword").value;
+				if (inputPassword == inputConfirmPass) {
+					$.ajax({
+						url: "http://localhost:8080/createAccountRequest",
+						type: "POST",
+						data: {
+							username: inputUsername,
+							password: inputPassword,
+						},
+						dataType: 'json',
+						success: function (result) {
+							const ACCOUNT_EXISTS = 0;
+							const CREATED_ACCOUNT = 1;
+						
 
-						if (result.code == LOGGEDIN) {
-							sessionStorage.setItem('username', inputUsername);
-							location.href = "/routes";
-						} else if (result.code == CREATED_ACCOUNT) {
-							// can add some stuff here later if we want to treat registering and logging in differently
-							document.getElementById("labelLoginFailed").innerHTML = "Created account with username " + inputUsername;
-						} else if (result.code == INCORRECT_PASSWORD) {
-							document.getElementById("labelLoginFailed").innerHTML = "Incorrect password.";
-						} else {
-							document.getElementById("labelLoginFailed").innerHTML = "Error contacting database. error: " + result.code;
+							if (result.code == ACCOUNT_EXISTS) {
+								document.getElementById("labelLoginFailed").innerHTML = "Account with username '" + inputUsername + "' already exists";
+							} else if (result.code == CREATED_ACCOUNT) {
+								// can add some stuff here later if we want to treat registering and logging in differently
+								document.getElementById("labelLoginFailed").innerHTML = "Created account with username '" + inputUsername + "'";
+							} else {
+								document.getElementById("labelLoginFailed").innerHTML = "Error contacting database. error: " + result.code;
+							}
 						}
-					}
-				});
+					});
+				} else {
+					document.getElementById("labelLoginFailed").innerHTML = "Passwords do not match.";
+				}
 			});
 			$('#buttonCreatePassword').on('click', function () {
 				var labelCP = document.findElementById("labelConfirm");

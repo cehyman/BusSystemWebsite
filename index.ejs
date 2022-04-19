@@ -32,15 +32,14 @@
 					dataType: 'json',
 					success: function (result) {
 						const LOGGEDIN = 0;
-						const CREATED_ACCOUNT = 1;
+						const ACCOUNT_DOESNT_EXIST = 1;
 						const INCORRECT_PASSWORD = 2;
 
 						if (result.code == LOGGEDIN) {
 							sessionStorage.setItem('username', inputUsername);
 							location.href = "/routes";
-						} else if (result.code == CREATED_ACCOUNT) {
-							// can add some stuff here later if we want to treat registering and logging in differently
-							document.getElementById("labelLoginFailed").innerHTML = "Created account with username " + inputUsername;
+						} else if (result.code == ACCOUNT_DOESNT_EXIST) {
+							document.getElementById("labelLoginFailed").innerHTML = "Account with username '" + inputUsername + "' does not exist.";
 						} else if (result.code == INCORRECT_PASSWORD) {
 							document.getElementById("labelLoginFailed").innerHTML = "Incorrect password.";
 						} else {

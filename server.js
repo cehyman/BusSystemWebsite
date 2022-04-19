@@ -21,8 +21,32 @@ app.post('/loginRequest', function(req, res) {
                 code: err
             });
         } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1
+            });
+        } else if (rows[0].password != req.body.password) {
+            res.json({
+                code: 2
+            });
+        } else {
+            res.json({
+                code: 0
+            });
+        }
+    });
+});
+
+// handle post request from createAccount.ejs
+app.post('/createAccountRequest', function (req, res) {
+    var request = 'SELECT * FROM customer WHERE username = "' + req.body.username + '"';
+    db.query(request, function (err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err
+            });
+        } else if (rows == null || rows.length == 0) {
             var addAccount = 'INSERT INTO customer (username, password) VALUES ("' + req.body.username + '", "' + req.body.password + '")';
-            db.query(addAccount, function(err, result) {
+            db.query(addAccount, function (err, result) {
                 if (err) {
                     res.json({
                         code: err
@@ -32,10 +56,6 @@ app.post('/loginRequest', function(req, res) {
             });
             res.json({
                 code: 1
-            });
-        } else if (rows[0].password != req.body.password) {
-            res.json({
-                code: 2
             });
         } else {
             res.json({
