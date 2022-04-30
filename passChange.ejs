@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Change Password</title>
+	<link rel="stylesheet" href="style.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<h1>Change your password.</h1>
+	<label class="redLabel" id="labelPasswordChangeFailed"></label><br />
+
+	<label>Username:</label>
+    <input id="tUsername" type="text"><br><br>
+    <label>Old Password:</label>
+	<input id="tOldPassword" type="password"><br><br>
+	<label>New Password:</label>
+	<input id="tNewPassword" type="password"><br><br>
+	<input id="buttonChange" type="button" value="Change Password" /><br><br>
+	<script>
+		$(document).ready(function () {
+			$('#buttonChange').on('click', function () {
+                var inputUsername = document.getElementById("tUsername").value;
+				var inputOldPassword = document.getElementById("tOldPassword").value;
+				var inputNewPassword = document.getElementById("tNewPassword").value;
+				$.ajax({
+					url: "http://localhost:8080/passChange",
+					type: "POST",
+					data: {
+                        username: inputUsername,
+						oldPassword: inputOldPassword,
+						newPassword: inputNewPassword,
+					},
+					dataType: 'json',
+					success: function (result) {
+						const PASS_CHANGED = 0;
+						const INCORRECT_PASSWORD = 1;
+                        const INCORRECT_USERNAME = 2;
+
+						if (result.code == PASS_CHANGED) {
+							sessionStorage.setItem('password', inputNewPassword);
+							location.href = "/account";
+						} else if (result.code == INCORRECT_PASSWORD) {
+							document.getElementById("labelIncorredOldPassword").innerHTML = "Wrong old password.";
+						} else if (result.code == INCORRECT_USERNAME) {
+							document.getElementById("labelLoginFailed").innerHTML = "Incorrect username.";
+						} else {
+							document.getElementById("labelLoginFailed").innerHTML = "Error contacting database. error: " + result.code;
+						}
+					}
+				});
+			});
+		}); 
+	</script>
+</body>
+
+</html>
