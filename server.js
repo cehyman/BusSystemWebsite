@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded( {
 
 // handle post request from index.ejs
 app.post('/loginRequest', function(req, res) {
+    console.log("login request");
     var request = 'SELECT * FROM customer WHERE username = "' + req.body.username + '"';
     db.query(request, function(err, rows, fields) {
         if (err) {
@@ -67,16 +68,21 @@ app.post('/createAccountRequest', function (req, res) {
 
 // handle post request from passChange.ejs
 app.post('/changePassword', function(req, res) {
-    var request = 'UPDATE customer SET password = "' + req.body.password + '"' + '"WHERE  username = "' + req.body.username;
+    console.log("change password");
+    // create update request to change password to req.body.newPassword
+
+    var request = 'UPDATE customer SET password = "' + req.body.newPassword + '"WHERE  username = "' + req.body.username + '"';
     db.query(request, function(err, rows, fields) {
         if (err) {
             res.json({
                 code: err
             });
+            // wont work because rows will always be null since UPDATE returns nothing even upon success
         } else if (rows == null || rows.length == 0) {
             res.json({
                 code: 1
             });
+            // won't work because rows[0] is undefined since UPDATE doesn't return anything, also should be req.body.oldPassword
         } else if (rows[0].password != req.body.password) {
             res.json({
                 code: 2
