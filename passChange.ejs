@@ -38,9 +38,10 @@
                         const PASSWORD_CHANGE_SUCCESS = 0;
                         const WRONG_PASSWORD = 1;
                         const WRONG_USERNAME = 2;
-
+                        console.log(result.code);
                         if (result.code == PASSWORD_CHANGE_SUCCESS) {
                             document.getElementById("labelPasswordChangeFailed").innerHTML = "Password changed successfully";
+                            sessionStorage.setItem('username', inputUsername);
                             location.href("/account");
                         } else if (result.code == WRONG_PASSWORD) {
                             document.getElementById("labelPasswordChangeFailed").innerHTML = "Incorrect Password";
