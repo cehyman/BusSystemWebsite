@@ -65,6 +65,30 @@ app.post('/createAccountRequest', function (req, res) {
     });
 });
 
+// handle post request from passChange.ejs
+app.post('/changePassword', function(req, res) {
+    var request = 'UPDATE customer SET password = "' + req.body.password + '"' + '"WHERE  username = "' + req.body.username;
+    db.query(request, function(err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err
+            });
+        } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1
+            });
+        } else if (rows[0].password != req.body.password) {
+            res.json({
+                code: 2
+            });
+        } else {
+            res.json({
+                code: 0
+            });
+        }
+    });
+});
+
 // handle post request from account.ejs
 app.post('/viewBookings', function(req, res) {
     var request = 'SELECT * FROM bookings WHERE username = "' + req.body.username + '"';
@@ -204,6 +228,9 @@ app.get('/routes', function (req, res) {
 });
 app.get('/createAccount', function (req, res) {
     res.render('createAccount', {});
+});
+app.get('/passChange', function (req, res) {
+    res.render('passChange', {});
 });
 app.use(express.static(__dirname)); //__dir and not _dir
 var port = 8080; // you can use any port
