@@ -24,32 +24,33 @@
                 var inputUsername = document.getElementById("tUsername").value;
 				var inputOldPassword = document.getElementById("tOldPassword").value;
 				var inputNewPassword = document.getElementById("tNewPassword").value;
-				$.ajax({
-					url: "http://localhost:8080/passChange",
-					type: "POST",
-					data: {
+                // make post request to "http://localhost:8080/changePassword"
+                $.ajax({
+                    url: "http://localhost:8080/changePassword",
+                    type: "POST",
+                    data: {
                         username: inputUsername,
-						oldPassword: inputOldPassword,
-						newPassword: inputNewPassword,
-					},
-					dataType: 'json',
-					success: function (result) {
-						const PASS_CHANGED = 0;
-						const INCORRECT_PASSWORD = 1;
-                        const INCORRECT_USERNAME = 2;
+                        oldPassword: inputOldPassword,
+                        newPassword: inputNewPassword,
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        const PASSWORD_CHANGE_SUCCESS = 0;
+                        const WRONG_PASSWORD = 1;
+                        const WRONG_USERNAME = 2;
 
-						if (result.code == PASS_CHANGED) {
-							sessionStorage.setItem('password', inputNewPassword);
-							location.href = "/account";
-						} else if (result.code == INCORRECT_PASSWORD) {
-							document.getElementById("labelIncorredOldPassword").innerHTML = "Wrong old password.";
-						} else if (result.code == INCORRECT_USERNAME) {
-							document.getElementById("labelLoginFailed").innerHTML = "Incorrect username.";
-						} else {
-							document.getElementById("labelLoginFailed").innerHTML = "Error contacting database. error: " + result.code;
-						}
-					}
-				});
+                        if (result.code == PASSWORD_CHANGE_SUCCESS) {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Password changed successfully";
+                            location.href("/account");
+                        } else if (result.code == WRONG_PASSWORD) {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Incorrect Password";
+                        } else if (result.code == WRONG_USERNAME) {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Incorrect Username";
+                        } else {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Error contacting database. error: " + result.code;
+                        }
+                    }
+                });
 			});
 		}); 
 	</script>
