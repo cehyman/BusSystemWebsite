@@ -68,21 +68,22 @@ app.post('/createAccountRequest', function (req, res) {
 
 // handle post request from passChange.ejs
 app.post('/changePassword', function(req, res) {
-    console.log("change password");
+    // console.log("change password");
     // create update request to change password to req.body.newPassword
     var request = 'SELECT username, password FROM customer WHERE username = "' + req.body.username + '"';
     console.log(req.body.username);
     db.query(request, function(err, rows, fields) {
-        console.log("first query");
+        // console.log("first query");
         if (err) {
             res.json({
                 code: err
             });
             // wont work because rows will always be null since UPDATE returns nothing even upon success
         } else if (rows.length > 0 && req.body.oldPassword == rows[0].password) {
+            console.log(rows[0].password);
             var request2 = 'UPDATE customer SET password = "' + req.body.newPassword + '"WHERE  username = "' + req.body.username + '"';
             db.query(request2, function(err, result) {
-                console.log("second query");
+                // console.log("second query");
                 if (err) {
                     res.json({
                         code: err
@@ -98,7 +99,7 @@ app.post('/changePassword', function(req, res) {
             });
         } else {
             res.json({
-                code: 0
+                code: 1
             });
         }
     });
