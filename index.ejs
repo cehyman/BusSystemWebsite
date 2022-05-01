@@ -37,7 +37,7 @@
 
 						if (result.code == LOGGEDIN) {
 							sessionStorage.setItem('username', inputUsername);
-							location.href = "/routes";
+							location.href = "/homePage";
 						} else if (result.code == ACCOUNT_DOESNT_EXIST) {
 							document.getElementById("labelLoginFailed").innerHTML = "Account with username '" + inputUsername + "' does not exist.";
 						} else if (result.code == INCORRECT_PASSWORD) {
