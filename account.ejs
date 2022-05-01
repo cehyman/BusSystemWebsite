@@ -51,14 +51,22 @@
 						row = table.insertRow(i);
 						col1 = row.insertCell(0);
 						col2 = row.insertCell(1);
+						col3 = row.insertCell(2);
+						col4 = row.insertCell(3);
 						col1.innerHTML = "" + dbData[i].route_id;
 						col2.innerHTML = "" + dbData[i].paid_price;
+						col3.innerHTML = "" + dbData[i].depart_time;
+						col4.innerHTML = "" + dbData[i].arrive_time;
 					}
 					var row = table.insertRow(0);
 					var col1 = row.insertCell(0);
 					var col2 = row.insertCell(1);
+					var col3 = row.insertCell(2);
+					var col4 = row.insertCell(3);
 					col1.innerHTML = "Route";
 					col2.innerHTML = "Price";
+					col3.innerHTML = "Depart Time";
+					col4.innerHTML = "Arrive Time";
 				} else if (result.code == EMPTY) {
 					var row = table.insertRow(0);
 					var col1 = row.insertCell(0);

@@ -71,7 +71,7 @@ app.post('/changePassword', function(req, res) {
     // console.log("change password");
     // create update request to change password to req.body.newPassword
     var request = 'SELECT username, password FROM customer WHERE username = "' + req.body.username + '"';
-    console.log(req.body.username);
+    // console.log(req.body.username);
     db.query(request, function(err, rows, fields) {
         // console.log("first query");
         if (err) {
@@ -80,7 +80,7 @@ app.post('/changePassword', function(req, res) {
             });
             // wont work because rows will always be null since UPDATE returns nothing even upon success
         } else if (rows.length > 0 && req.body.oldPassword == rows[0].password) {
-            console.log(rows[0].password);
+            // console.log(rows[0].password);
             var request2 = 'UPDATE customer SET password = "' + req.body.newPassword + '"WHERE  username = "' + req.body.username + '"';
             db.query(request2, function(err, result) {
                 // console.log("second query");
@@ -107,7 +107,7 @@ app.post('/changePassword', function(req, res) {
 
 // handle post request from account.ejs
 app.post('/viewBookings', function(req, res) {
-    var request = 'SELECT * FROM bookings WHERE username = "' + req.body.username + '"';
+    var request = 'SELECT * FROM bookings JOIN route ON bookings.route_id = route.route_id WHERE username = "' + req.body.username + '"';
     db.query(request, function(err, rows, fields) {
         if (err) {
             res.json({
