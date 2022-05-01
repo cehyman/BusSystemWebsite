@@ -42,7 +42,7 @@
                         if (result.code == PASSWORD_CHANGE_SUCCESS) {
                             document.getElementById("labelPasswordChangeFailed").innerHTML = "Password changed successfully";
                             sessionStorage.setItem('username', inputUsername);
-                            location.href("/account");
+                            location.href = "/account";
                         } else if (result.code == WRONG_PASSWORD) {
                             document.getElementById("labelPasswordChangeFailed").innerHTML = "Incorrect Password";
                         } else if (result.code == WRONG_USERNAME) {
