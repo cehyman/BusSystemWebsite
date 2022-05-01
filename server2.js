@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded( {
 
 // handle post request from index.ejs
 app.post('/loginRequest', function(req, res) {
+    console.log("login request");
     // var request = 'SELECT * FROM customer WHERE username = "' + req.body.username + '"';
     var request = 'SELECT * FROM customer WHERE username = ?;'
     db.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED;')
@@ -75,12 +76,56 @@ app.post('/createAccountRequest', function (req, res) {
     db.query('COMMIT;')
 });
 
+// handle post request from passChange.ejs
+app.post('/changePassword', function(req, res) {
+    // console.log("change password");
+    // create update request to change password to req.body.newPassword
+    // var request = 'SELECT username, password FROM customer WHERE username = "' + req.body.username + '"';
+    var request = 'SELECT username, password FROM customer WHERE username = ?;'
+    // console.log(req.body.username);
+    db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;')
+    db.query('START TRANSACTION;')
+    db.query(request, [req.body.username], function(err, rows, fields) {
+        // console.log("first query");
+        if (err) {
+            res.json({
+                code: err
+            });
+            // wont work because rows will always be null since UPDATE returns nothing even upon success
+        } else if (rows.length > 0 && req.body.oldPassword == rows[0].password) {
+            // console.log(rows[0].password);
+            // var request2 = 'UPDATE customer SET password = "' + req.body.newPassword + '"WHERE  username = "' + req.body.username + '"';
+            var request2 = 'UPDATE customer SET password = ? WHERE username = ?;'
+            db.query(request2, [req.body.newPassword, req.body.username], function(err, result) {
+                // console.log("second query");
+                if (err) {
+                    res.json({
+                        code: err
+                    });
+                }
+            });
+            res.json({
+                code: 0
+            });
+        } else if (rows.length == 0) {
+            res.json({
+                code: 2
+            });
+        } else {
+            res.json({
+                code: 1
+            });
+        }
+    });
+    db.query('COMMIT;')
+});
+
 // handle post request from account.ejs
 app.post('/viewBookings', function(req, res) {
-    // var request = 'SELECT * FROM bookings WHERE username = "' + req.body.username + '"';
+    // var request = 'SELECT * FROM bookings JOIN route ON bookings.route_id = route.route_id WHERE username = "' + req.body.username + '"';
     db.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED;')
     db.query('START TRANSACTION;')
-    var request = 'SELECT * FROM bookings WHERE username = ?;'
+    var request = 'SELECT * FROM bookings JOIN route ON bookings.route_id = route.route_id WHERE username = ?;'
     db.query(request, [req.body.username], function(err, rows, fields) {
         if (err) {
             res.json({
@@ -129,7 +174,10 @@ app.post('/viewSchedule', function(req, res) {
     db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;')
     db.query('START TRANSACTION;')
     // var request = 'SELECT depart_time, arrive_time FROM route WHERE route_id = "' + req.body.route_id + '"';
-    var request = 'SELECT depart_time, arrive_time FROM route WHERE route_id = ?;'
+    var request = `SELECT depart_time, arrive_time, s1.stop_id AS depart_id, s1.stop_name AS depart_stop, s2.stop_id AS arrive_id, s2.stop_name AS arrive_stop FROM route 
+			INNER JOIN stops AS s1 ON route.depart_stop = s1.stop_id 
+			INNER JOIN stops AS s2 ON route.arrive_stop = s2.stop_id 
+			WHERE route_id = ?;`
     db.query(request, [req.body.route_id], function(err, rows, fields) {
         if (err) {
             res.json({
@@ -232,6 +280,9 @@ app.get('/routes', function (req, res) {
 });
 app.get('/createAccount', function (req, res) {
     res.render('createAccount', {});
+});
+app.get('/passChange', function (req, res) {
+    res.render('passChange', {});
 });
 app.use(express.static(__dirname)); //__dir and not _dir
 var port = 8080; // you can use any port

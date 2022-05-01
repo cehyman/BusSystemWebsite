@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Change Password</title>
+	<link rel="stylesheet" href="style.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<h1>Change your password.</h1>
+	<label class="redLabel" id="labelPasswordChangeFailed"></label><br />
+
+	<label>Username:</label>
+    <input id="tUsername" type="text"><br><br>
+    <label>Old Password:</label>
+	<input id="tOldPassword" type="password"><br><br>
+	<label>New Password:</label>
+	<input id="tNewPassword" type="password"><br><br>
+	<input id="buttonChange" type="button" value="Change Password" /><br><br>
+	<script>
+		$(document).ready(function () {
+			$('#buttonChange').on('click', function () {
+                var inputUsername = document.getElementById("tUsername").value;
+				var inputOldPassword = document.getElementById("tOldPassword").value;
+				var inputNewPassword = document.getElementById("tNewPassword").value;
+                // make post request to "http://localhost:8080/changePassword"
+                $.ajax({
+                    url: "http://localhost:8080/changePassword",
+                    type: "POST",
+                    data: {
+                        username: inputUsername,
+                        oldPassword: inputOldPassword,
+                        newPassword: inputNewPassword,
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        const PASSWORD_CHANGE_SUCCESS = 0;
+                        const WRONG_PASSWORD = 1;
+                        const WRONG_USERNAME = 2;
+                        console.log(result.code);
+                        if (result.code == PASSWORD_CHANGE_SUCCESS) {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Password changed successfully";
+                            sessionStorage.setItem('username', inputUsername);
+                            location.href = "/account";
+                        } else if (result.code == WRONG_PASSWORD) {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Incorrect Password";
+                        } else if (result.code == WRONG_USERNAME) {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Incorrect Username";
+                        } else {
+                            document.getElementById("labelPasswordChangeFailed").innerHTML = "Error contacting database. error: " + result.code;
+                        }
+                    }
+                });
+			});
+		}); 
+	</script>
+</body>
+
+</html>
