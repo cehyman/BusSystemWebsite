@@ -284,6 +284,9 @@ app.get('/createAccount', function (req, res) {
 app.get('/passChange', function (req, res) {
     res.render('passChange', {});
 });
+app.get('/homePage', function (req, res) {
+    res.render('homePage', {});
+});
 app.use(express.static(__dirname)); //__dir and not _dir
 var port = 8080; // you can use any port
 app.listen(port);
