@@ -15,7 +15,6 @@ app.use(bodyParser.urlencoded( {
 // handle post request from index.ejs
 app.post('/loginRequest', function(req, res) {
     console.log("login request");
-    // var request = 'SELECT * FROM customer WHERE username = "' + req.body.username + '"';
     var request = 'SELECT * FROM customer WHERE username = ?;'
     db.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED;')
     db.query('START TRANSACTION;')
@@ -43,7 +42,6 @@ app.post('/loginRequest', function(req, res) {
 
 // handle post request from createAccount.ejs
 app.post('/createAccountRequest', function (req, res) {
-    // var request = 'SELECT * FROM customer WHERE username = "' + req.body.username + '"';
     db.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED;')
     db.query('START TRANSACTION;')
     var request = 'SELECT * FROM customer WHERE username = ?;'
@@ -80,7 +78,6 @@ app.post('/createAccountRequest', function (req, res) {
 app.post('/changePassword', function(req, res) {
     // console.log("change password ");
     // create update request to change password to req.body.newPassword
-    // var request = 'SELECT username, password FROM customer WHERE username = "' + req.body.username + '"';
     var request = 'SELECT username, password FROM customer WHERE username = ?;'
     // console.log(req.body.username);
     db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;')
@@ -94,7 +91,6 @@ app.post('/changePassword', function(req, res) {
             // wont work because rows will always be null since UPDATE returns nothing even upon success
         } else if (rows.length > 0 && req.body.oldPassword == rows[0].password) {
             // console.log(rows[0].password);
-            // var request2 = 'UPDATE customer SET password = "' + req.body.newPassword + '"WHERE  username = "' + req.body.username + '"';
             var request2 = 'UPDATE customer SET password = ? WHERE username = ?;'
             db.query(request2, [req.body.newPassword, req.body.username], function(err, result) {
                 // console.log("second query");
@@ -122,7 +118,6 @@ app.post('/changePassword', function(req, res) {
 
 // handle post request from account.ejs
 app.post('/viewBookings', function(req, res) {
-    // var request = 'SELECT * FROM bookings JOIN route ON bookings.route_id = route.route_id WHERE username = "' + req.body.username + '"';
     db.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED;')
     db.query('START TRANSACTION;')
     var request = 'SELECT * FROM bookings JOIN route ON bookings.route_id = route.route_id WHERE username = ?;'
@@ -150,7 +145,6 @@ app.post('/viewBookings', function(req, res) {
 app.post('/generateBookings', function(req, res) {
     // bookings table looks like (booking_id, route_id, username, paid_price)
     for (var i = 0; i < req.body.bookings.length; i++) {
-        // var request = 'INSERT INTO bookings (route_id, username, paid_price) VALUES ("' + req.body.bookings[i].route_id + '", "' + req.body.username + '", "' + req.body.bookings[i].price + '")';
         db.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;')
         db.query('START TRANSACTION;')
         var request = 'INSERT INTO bookings (route_id, username, paid_price) VALUES (?, ?, ?);'
@@ -173,7 +167,6 @@ app.post('/generateBookings', function(req, res) {
 app.post('/viewSchedule', function(req, res) { 
     db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;')
     db.query('START TRANSACTION;')
-    // var request = 'SELECT depart_time, arrive_time FROM route WHERE route_id = "' + req.body.route_id + '"';
     var request = `SELECT depart_time, arrive_time, s1.stop_id AS depart_id, s1.stop_name AS depart_stop, s2.stop_id AS arrive_id, s2.stop_name AS arrive_stop FROM route 
 			INNER JOIN stops AS s1 ON route.depart_stop = s1.stop_id 
 			INNER JOIN stops AS s2 ON route.arrive_stop = s2.stop_id 
@@ -200,7 +193,7 @@ app.post('/viewSchedule', function(req, res) {
 });
 
 app.post('/viewRewards', function(req, res) { 
-    var request = 'SELECT username, discount FROM customer_rewards WHERE username = "' + req.body.username + '"';
+    var request = 'CALL ViewAllRewards("' + req.body.username + '");'
     db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
     db.query('START TRANSACTION;');
     db.query(request, function(err, rows, fields) {
@@ -209,7 +202,7 @@ app.post('/viewRewards', function(req, res) {
                 code: err,
                 rewards: null
             });
-        } else if (rows == null || rows.length == 0) {
+        } else if (rows[0] == null || rows[0].length == 0) {
             res.json({
                 code: 1,
                 rewards: null
@@ -217,7 +210,7 @@ app.post('/viewRewards', function(req, res) {
         } else {
             res.json({
                 code: 0,
-                rewards: rows
+                rewards: rows[0]
             });
         }
     });
@@ -227,14 +220,15 @@ app.post('/viewRewards', function(req, res) {
 app.get('/viewRoutes', function(req, res) {
     db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;')
     db.query('START TRANSACTION;')
-    var request = 'SELECT route_id FROM route';
+    var request = 'CALL ViewAllRoutes()';
     db.query(request, function(err, rows, fields) {
+        console.log(rows);
         if (err) {
             res.json({
                 code: err,
                 routes: null
             });
-        } else if (rows == null || rows.length == 0) {
+        } else if (rows[0] == null || rows[0].length == 0) {
             res.json({
                 code: 1,
                 routes: null
@@ -242,7 +236,7 @@ app.get('/viewRoutes', function(req, res) {
         } else {
             res.json({
                 code: 0,
-                routes: rows
+                routes: rows[0]
             });
         }
     });
