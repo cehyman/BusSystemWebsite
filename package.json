@@ -1,0 +1,26 @@
+{
+  "name": "group-15-cs348",
+  "version": "1.0.0",
+  "description": "Installing node and necessary packages 1. Install node and npm (node package manager) on your machine, use google to find out how 2. navigate to the main directory containing server.js in a terminal 3. run command \"npm init\", then hit enter using all of the default values until finished 4. run command \"npm install express ejs mysql2 body-parser --save\"",
+  "main": "database.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cehyman/group-15-cs348.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cehyman/group-15-cs348/issues"
+  },
+  "homepage": "https://github.com/cehyman/group-15-cs348#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.7",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3"
+  }
+}

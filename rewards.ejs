@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Rewards</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="logOut.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>Welcome to the Rewards page.</h1>
+    <p>Here will be where you can look at the rewards you have earned!</p>
+
+    <h2>Your discount is:</h2>
+	<table id="tableRewards"></table>
+
+    <label id="labelUsername"></label><br />
+    <input id="buttonMyAcc" type="button" onclick="location.href = '/account';" value="My Account" />
+    <input id="buttonLogOut" type="button" onclick="logOut();" value="Log Out" />
+    <br /><br /><br />
+
+
+
+
+</body>
+
+</html>
+
+<script>
+    	function populateRewards() {
+		var labelUser = document.getElementById("labelUsername");
+		labelUser.innerHTML = 'Logged in as ' + sessionStorage.getItem('username');
+		var table = document.getElementById("tableRewards");
+		var dbData;
+		//get the list of rewards that the user has from database and add them to table here
+		$.ajax({
+			url: "http://localhost:8080/viewRewards",
+			type: "POST",
+			data: {
+				username: sessionStorage.getItem('username')
+			},
+			dataType: 'json',
+			success: function (result) {
+				const NONEMPTY = 0;
+				const EMPTY = 1;
+				if (result.code == NONEMPTY) {
+					dbData = result.rewards;
+                    var row = table.insertRow(0);
+					var col1 = row.insertCell(0);
+					var col2 = row.insertCell(1);
+					col1.innerHTML = "User";
+					col2.innerHTML = "Discount";
+                    row = table.insertRow(1);
+                    col1 = row.insertCell(0);
+                    col2 = row.insertCell(1);
+                    col1.innerHTML = "" + dbData[0].username;
+					col2.innerHTML = "" + dbData[0].discount;
+
+
+				} else if (result.code == EMPTY) {
+					var row = table.insertRow(0);
+					var col1 = row.insertCell(0);
+					col1.innerHTML = "No rewards."
+				} else {
+					var row = table.insertRow(0);
+					var col1 = row.insertCell(0);
+					col1.innerHTML = "Error fetching rewards.";
+				}
+			}
+		});
+	}
+	populateRewards();
+</script>

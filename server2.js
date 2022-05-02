@@ -199,6 +199,31 @@ app.post('/viewSchedule', function(req, res) {
     db.query('COMMIT;')
 });
 
+app.post('/viewRewards', function(req, res) { 
+    var request = 'SELECT username, discount FROM customer_rewards WHERE username = "' + req.body.username + '"';
+    db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
+    db.query('START TRANSACTION;');
+    db.query(request, function(err, rows, fields) {
+        if (err) {
+            res.json({
+                code: err,
+                schedule: null
+            });
+        } else if (rows == null || rows.length == 0) {
+            res.json({
+                code: 1,
+                schedule: null
+            });
+        } else {
+            res.json({
+                code: 0,
+                schedule: rows
+            });
+        }
+    });
+    db.query('COMMIT;')
+});
+
 app.get('/viewRoutes', function(req, res) {
     db.query('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;')
     db.query('START TRANSACTION;')
@@ -286,6 +311,9 @@ app.get('/passChange', function (req, res) {
 });
 app.get('/homePage', function (req, res) {
     res.render('homePage', {});
+});
+app.get('/rewards', function (req, res) {
+    res.render('rewards', {});
 });
 app.use(express.static(__dirname)); //__dir and not _dir
 var port = 8080; // you can use any port
