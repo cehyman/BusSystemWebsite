@@ -78,7 +78,7 @@ app.post('/createAccountRequest', function (req, res) {
 
 // handle post request from passChange.ejs
 app.post('/changePassword', function(req, res) {
-    // console.log("change password");
+    // console.log("change password ");
     // create update request to change password to req.body.newPassword
     // var request = 'SELECT username, password FROM customer WHERE username = "' + req.body.username + '"';
     var request = 'SELECT username, password FROM customer WHERE username = ?;'
@@ -207,17 +207,17 @@ app.post('/viewRewards', function(req, res) {
         if (err) {
             res.json({
                 code: err,
-                schedule: null
+                rewards: null
             });
         } else if (rows == null || rows.length == 0) {
             res.json({
                 code: 1,
-                schedule: null
+                rewards: null
             });
         } else {
             res.json({
                 code: 0,
-                schedule: rows
+                rewards: rows
             });
         }
     });
