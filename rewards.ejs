@@ -47,26 +47,26 @@
 				const EMPTY = 1;
 				if (result.code == NONEMPTY) {
 					dbData = result.rewards;
-                    var row = table.insertRow(0);
+                    			var row = table.insertRow(0);
 					var col1 = row.insertCell(0);
 					var col2 = row.insertCell(1);
 					col1.innerHTML = "User";
 					col2.innerHTML = "Discount";
-                    row = table.insertRow(1);
-                    col1 = row.insertCell(0);
-                    col2 = row.insertCell(1);
-                    col1.innerHTML = "" + dbData[0].username;
+                    			row = table.insertRow(1);
+                    			col1 = row.insertCell(0);
+                    			col2 = row.insertCell(1);
+                    			col1.innerHTML = "" + dbData[0].username;
 					col2.innerHTML = "$" + dbData[0].discount;
 
 
 				} else if (result.code == EMPTY) {
 					var row = table.insertRow(0);
 					var col1 = row.insertCell(0);
-					col1.innerHTML = "No rewards."
+					col1.innerHTML = "No discount available."
 				} else {
 					var row = table.insertRow(0);
 					var col1 = row.insertCell(0);
-					col1.innerHTML = "Error fetching rewards.";
+					col1.innerHTML = "Error fetching discount.";
 				}
 			}
 		});
